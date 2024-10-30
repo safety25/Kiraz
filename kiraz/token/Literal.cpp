@@ -3,4 +3,5 @@
 
 namespace token {
     Integer::~Integer() {}
+    Identifier::~Identifier() {}
 }

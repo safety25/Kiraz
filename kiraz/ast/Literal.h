@@ -27,6 +27,17 @@ private:
     Node::Cptr m_operand;
 };
 
+class Identifier : public Node {
+public:
+    Identifier(Token::Ptr token);
+
+    std::string as_string() const override { return fmt::format("Identifier({})", m_name); }
+
+private:
+    std::string m_name;
+};
+
+
 }
 
 #endif

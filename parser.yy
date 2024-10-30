@@ -3,8 +3,10 @@
 
 #include <kiraz/ast/Operator.h>
 #include <kiraz/ast/Literal.h>
-
+#include <kiraz/ast/LetNode.h>
+#include <kiraz/token/keyword.h>
 #include <kiraz/token/Literal.h>
+#include <kiraz/token/Operator.h>
 
 int yyerror(const char *msg);
 extern std::shared_ptr<Token> curtoken;
@@ -26,12 +28,45 @@ extern int yylineno;
 %left OP_PLUS OP_MINUS
 %left OP_MULT OP_DIVF
 
+%token KW_FUNC  
+%token KW_LET    
+%token IDENTIFIER
+%token OP_COLON
+%token OP_LBRACE
+%token OP_RBRACE
+%token OP_COMMA
+%token OP_SCOLON
+%token OP_ASSIGN
 %%
 
 stmt:
     OP_LPAREN stmt OP_RPAREN { $$ = $2; }
     | addsub
+    | let_stmt
     ;
+
+
+let_stmt:
+    KW_LET type OP_ASSIGN expr OP_SCOLON { 
+        $$ = Node::add<ast::LetNode>($2, nullptr, $4); 
+    }
+    | KW_LET type OP_COLON type OP_SCOLON { 
+        $$ = Node::add<ast::LetNode>($2, $4, nullptr); 
+    }
+    | KW_LET type OP_COLON type OP_ASSIGN expr OP_SCOLON { 
+        $$ = Node::add<ast::LetNode>($2, $4, $6); 
+    }
+    ;
+
+type:
+    IDENTIFIER { $$ = Node::add<ast::Identifier>(curtoken); }
+    ;
+
+expr:
+    addsub
+    | posneg
+    ;
+
 
 addsub:
     muldiv

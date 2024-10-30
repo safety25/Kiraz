@@ -7,6 +7,7 @@
 #include "main.h"
 #include <kiraz/token/Literal.h>
 #include <kiraz/token/Operator.h>
+#include <kiraz/token/keyword.h>
 static auto &colno = Token::colno;
 using namespace token;
 extern std::shared_ptr<Token> curtoken;
@@ -24,7 +25,23 @@ extern std::shared_ptr<Token> curtoken;
 "(" {colno += yyleng; curtoken = Token::New<OpLparen>(); return OP_LPAREN; }
 ")" {colno += yyleng; curtoken = Token::New<OpRparen>(); return OP_RPAREN; }
 
+"func" { colno += yyleng; curtoken = Token::New<KwFunc>(); return KW_FUNC; }
+"let" { colno += yyleng; curtoken = Token::New<KwLet>(); return KW_LET; }
+
+"," { colno += yyleng; curtoken = Token::New<OpComma>(); return OP_COMMA; }
+";" { colno += yyleng; curtoken = Token::New<OpScolon>(); return OP_SCOLON; }
+":" { colno += yyleng; curtoken = Token::New<OpColon>(); return OP_COLON; }
+"{" { colno += yyleng; curtoken = Token::New<OpLbrace>(); return OP_LBRACE; }
+"}" { colno += yyleng; curtoken = Token::New<OpRbrace>(); return OP_RBRACE; }
+"=" { colno += yyleng; curtoken = Token::New<OpAssign>(); return OP_ASSIGN; }
+
+[a-zA-Z_][a-zA-Z0-9_]* {colno += yyleng; curtoken = Token::New<Identifier>(yytext); return IDENTIFIER; }
+
+
+
+
 [ \n\t]+ {colno += yyleng;}
 .       {colno += yyleng; curtoken = Token::New<Rejected>("reject"); return YYUNDEF; }
 
 .        ;
+ 

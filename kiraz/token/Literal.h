@@ -26,6 +26,24 @@ private:
     std::string m_value;
 };
 
+class Identifier : public Token {
+public:
+    Identifier(std::string_view name)
+        : Token(IDENTIFIER), m_name(name) {}
+    virtual ~Identifier();
+
+    std::string as_string() const override { 
+        return fmt::format("Identifier({})", m_name); }
+
+    void print() { 
+        fmt::print("{}\n", as_string()); }
+
+    auto get_name() const { return m_name; }
+
+private:
+    std::string m_name;
+};
+
 }
 
 #endif // KIRAZ_TOKEN_LITERAL_H

@@ -16,7 +16,13 @@ namespace ast {
         catch (const std::exception& e){
             //TODO Mark this node as invalid
         }
-
-
     }
+
+    
+    Identifier::Identifier(Token::Ptr t) : Node(IDENTIFIER) {
+        assert(t->get_id() == IDENTIFIER);
+        auto token_id = std::static_pointer_cast<const token::Identifier>(t);
+        m_name = token_id->get_name();
+    }
+
 }
