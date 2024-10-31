@@ -11,7 +11,7 @@ public:
         : Token(L_INTEGER), m_base(base), m_value(value) {}
     virtual ~Integer();
 
-    std::string as_string() const override {return fmt::format("Integer{}", m_value); }
+    std::string as_string() const override {return fmt::format("Int({}, {})", m_base, m_value); }
 
     void print() {fmt::print("{}\n", as_string()); }
 

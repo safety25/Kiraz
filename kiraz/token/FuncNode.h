@@ -8,7 +8,7 @@ namespace token {
 class ArgNode : public Token {
 public:
     ArgNode(std::shared_ptr<Token> name, std::shared_ptr<Token> type)
-        : Token(IDENTIFIER), m_name(std::move(name)), m_type(std::move(type)) {}
+        : Token(IDENTIFIER), m_name(name), m_type(type) {}
     
     std::string as_string() const override {
         return fmt::format("ArgNode(name={}, type={})", m_name->as_string(), m_type->as_string());
@@ -24,7 +24,7 @@ public:
     FuncArgs() : Token(OP_LPAREN) {}
     
     void add_argument(std::shared_ptr<Token> arg) {
-        m_args.push_back(std::move(arg));
+        m_args.push_back(arg);
     }
 
     std::string as_string() const override {
