@@ -19,7 +19,7 @@ public:
     SignedNode(int op, Node::Cptr operand) : Node(L_INTEGER), m_operator(op), m_operand(operand) {}
 
     std::string as_string() const override {
-        return fmt::format("Integer({}, {})", m_operator, m_operand->as_string());
+        return fmt::format("Int({}, {})", m_operator, m_operand->as_string());
     }
 
 private:
@@ -31,7 +31,7 @@ class Identifier : public Node {
 public:
     Identifier(Token::Ptr token);
 
-    std::string as_string() const override { return fmt::format("Identifier({})", m_name); }
+    std::string as_string() const override { return fmt::format("Id({})", m_name); }
 
 private:
     std::string m_name;

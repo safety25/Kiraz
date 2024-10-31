@@ -33,7 +33,7 @@ public:
     virtual ~Identifier();
 
     std::string as_string() const override { 
-        return fmt::format("Identifier({})", m_name); }
+        return fmt::format("Id({})", m_name); }
 
     void print() { 
         fmt::print("{}\n", as_string()); }
