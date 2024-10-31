@@ -4,9 +4,11 @@
 #include <kiraz/ast/Operator.h>
 #include <kiraz/ast/Literal.h>
 #include <kiraz/ast/LetNode.h>
+#include <kiraz/ast/FuncNode.h>
 #include <kiraz/token/keyword.h>
 #include <kiraz/token/Literal.h>
 #include <kiraz/token/Operator.h>
+#include <kiraz/token/FuncNode.h>
 
 int yyerror(const char *msg);
 extern std::shared_ptr<Token> curtoken;
@@ -43,6 +45,50 @@ stmt:
     OP_LPAREN stmt OP_RPAREN { $$ = $2; }
     | addsub
     | let_stmt
+    | func_stmt
+    ;
+
+
+func_stmt:
+    KW_FUNC IDENTIFIER OP_LPAREN arg_list OP_RPAREN OP_COLON type OP_LBRACE stmt_list OP_RBRACE OP_SCOLON {
+        $$ = Node::add<ast::FuncNode>($2, $4, $7, $9);
+    }
+    ;
+
+arg_list:
+    | {
+        $$ = Node::add<ast::FuncArgs>();
+    }
+    | IDENTIFIER OP_COLON type {
+        auto args = Node::add<ast::FuncArgs>();
+        args->add_argument(Node::add<ast::ArgNode>(Node::add<ast::Identifier>(curtoken), $3));
+        $$ = args;
+    }
+    | arg_list OP_COMMA IDENTIFIER OP_COLON type {
+        auto args = std::dynamic_pointer_cast<ast::FuncArgs>($1);
+        if (args) {
+            args->add_argument(Node::add<ast::ArgNode>(Node::add<ast::Identifier>(curtoken), $5));
+        }
+        $$ = $1;
+    }
+    ;
+
+stmt_list:
+    | {
+        $$ = Node::add<ast::NodeList>();
+    }
+    | stmt {
+        auto stmts = Node::add<ast::NodeList>();
+        stmts->add_node($1);
+        $$ = stmts;
+    }
+    | stmt_list stmt {
+        auto stmts = std::dynamic_pointer_cast<ast::NodeList>($1);
+        if (stmts) {
+            stmts->add_node($2);
+        }
+        $$ = $1;
+    }
     ;
 
 
