@@ -50,7 +50,7 @@ stmt:
 
 
 func_stmt:
-    KW_FUNC IDENTIFIER OP_LPAREN arg_list OP_RPAREN OP_COLON type OP_LBRACE stmt_list OP_RBRACE OP_SCOLON {
+    KW_FUNC type OP_LPAREN arg_list OP_RPAREN OP_COLON type OP_LBRACE stmt_list OP_RBRACE OP_SCOLON {
         $$ = Node::add<ast::FuncNode>($2, $4, $7, $9);
     }
     ;
