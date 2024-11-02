@@ -34,13 +34,13 @@ class OpBinary : public Node {
                         opstr = "Mult";
                         break;
                     case OP_DIVF:
-                        opstr = "Div";
+                        opstr = "DivF";
                         break;
                     default:
                         break;
                 }
 
-                return fmt::format("{}({},{})", opstr, get_left()->as_string(), get_right()->as_string());
+                return fmt::format("{}(l={}, r={})", opstr, get_left()->as_string(), get_right()->as_string());
         }
 
 private:

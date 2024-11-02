@@ -46,6 +46,7 @@ stmt:
     | addsub
     | let_stmt
     | func_stmt
+    | stmt OP_SCOLON { $$ = $1; }
     ;
 
 
@@ -127,7 +128,8 @@ muldiv:
     ;
 
 posneg:
-    L_INTEGER { $$ = Node::add<ast::Integer>(curtoken); }
+    type
+    | L_INTEGER { $$ = Node::add<ast::Integer>(curtoken); }
     | OP_PLUS stmt { $$ = Node::add<ast::SignedNode>(OP_PLUS, $2); }
     | OP_MINUS stmt { $$ = Node::add<ast::SignedNode>(OP_MINUS, $2); }
     ;
