@@ -39,16 +39,38 @@ extern int yylineno;
 %token OP_COMMA
 %token OP_SCOLON
 %token OP_ASSIGN
+
+
+%token OP_EQ
+%token OP_GT
+%token OP_GE
+%token OP_LT
+%token OP_LE
+
 %%
 
 stmt:
     OP_LPAREN stmt OP_RPAREN { $$ = $2; }
-    | addsub
     | let_stmt
     | func_stmt
-    | stmt OP_SCOLON { $$ = $1; }
+    | assign_stmt OP_SCOLON
+    | expr OP_SCOLON
     ;
 
+expr:
+    OP_LPAREN expr OP_RPAREN { $$ = $2; }
+    | addsub
+    | posneg
+    | expr OP_EQ expr { $$ = Node::add<ast::OpEq>($1, $3); }
+    | expr OP_GT expr { $$ = Node::add<ast::OpGt>($1, $3); }
+    | expr OP_GE expr { $$ = Node::add<ast::OpGe>($1, $3); }
+    | expr OP_LT expr { $$ = Node::add<ast::OpLt>($1, $3); }
+    | expr OP_LE expr { $$ = Node::add<ast::OpLe>($1, $3); }
+    | type
+    ;
+
+assign_stmt: 
+    type OP_ASSIGN expr { $$ = Node::add<ast::AssignNode>($1, $3); }
 
 func_stmt:
     KW_FUNC type OP_LPAREN arg_list OP_RPAREN OP_COLON type OP_LBRACE stmt_list OP_RBRACE OP_SCOLON {
@@ -92,7 +114,6 @@ stmt_list:
     }
     ;
 
-
 let_stmt:
     KW_LET type OP_ASSIGN expr OP_SCOLON { 
         $$ = Node::add<ast::LetNode>($2, nullptr, $4); 
@@ -109,29 +130,23 @@ type:
     IDENTIFIER { $$ = Node::add<ast::Identifier>(curtoken); }
     ;
 
-expr:
-    addsub
-    | posneg
-    ;
-
-
 addsub:
     muldiv
-    | stmt OP_PLUS stmt { $$ = Node::add<ast::OpAdd>($1, $3); }
-    | stmt OP_MINUS stmt { $$ = Node::add<ast::OpSub>($1, $3); }
+    | expr OP_PLUS expr { $$ = Node::add<ast::OpAdd>($1, $3); }
+    | expr OP_MINUS expr { $$ = Node::add<ast::OpSub>($1, $3); }
     ;
 
 muldiv:
     posneg
-    | stmt OP_MULT stmt { $$ = Node::add<ast::OpMult>($1, $3); }
-    | stmt OP_DIVF stmt { $$ = Node::add<ast::OpDivF>($1, $3); }
+    | expr OP_MULT expr { $$ = Node::add<ast::OpMult>($1, $3); }
+    | expr OP_DIVF expr { $$ = Node::add<ast::OpDivF>($1, $3); }
     ;
 
 posneg:
     type
     | L_INTEGER { $$ = Node::add<ast::Integer>(curtoken); }
-    | OP_PLUS stmt { $$ = Node::add<ast::SignedNode>(OP_PLUS, $2); }
-    | OP_MINUS stmt { $$ = Node::add<ast::SignedNode>(OP_MINUS, $2); }
+    | OP_PLUS expr { $$ = Node::add<ast::SignedNode>(OP_PLUS, $2); }
+    | OP_MINUS expr { $$ = Node::add<ast::SignedNode>(OP_MINUS, $2); }
     ;
 
 stmt: %empty

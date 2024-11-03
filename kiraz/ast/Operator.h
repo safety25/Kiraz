@@ -36,6 +36,21 @@ class OpBinary : public Node {
                     case OP_DIVF:
                         opstr = "DivF";
                         break;
+                    case OP_EQ: 
+                        opstr = "OpEq"; 
+                        break;
+                    case OP_GT: 
+                        opstr = "OpGt"; 
+                        break;
+                    case OP_GE: 
+                        opstr = "OpGe"; 
+                        break;
+                    case OP_LT: 
+                        opstr = "OpLt"; 
+                        break;
+                    case OP_LE: 
+                        opstr = "OpLe"; 
+                        break;
                     default:
                         break;
                 }
@@ -66,6 +81,49 @@ class OpDivF : public OpBinary {
 public:
     OpDivF(const Node::Ptr &left, const Node::Ptr & right) : OpBinary(OP_DIVF, left, right) {}
 };
+
+class AssignNode : public Node {
+public:
+    AssignNode(const Node::Ptr &left, const Node::Ptr &right)
+        : Node(OP_ASSIGN), m_left(left), m_right(right) {
+            assert(left);
+            assert(right);
+        }
+
+    std::string as_string() const override {
+        return fmt::format("Assign(l={}, r={})", m_left->as_string(), m_right->as_string());
+    }
+
+private:
+    Node::Ptr m_left, m_right;
+};
+
+class OpEq : public OpBinary {
+public:
+    OpEq(const Node::Ptr &left, const Node::Ptr &right) : OpBinary(OP_EQ, left, right) {}
+};
+
+class OpGt : public OpBinary {
+public:
+    OpGt(const Node::Ptr &left, const Node::Ptr &right) : OpBinary(OP_GT, left, right) {}
+};
+
+class OpGe : public OpBinary {
+public:
+    OpGe(const Node::Ptr &left, const Node::Ptr &right) : OpBinary(OP_GE, left, right) {}
+};
+
+class OpLt : public OpBinary {
+public:
+    OpLt(const Node::Ptr &left, const Node::Ptr &right) : OpBinary(OP_LT, left, right) {}
+};
+
+class OpLe : public OpBinary {
+public:
+    OpLe(const Node::Ptr &left, const Node::Ptr &right) : OpBinary(OP_LE, left, right) {}
+};
+
+
 }
 
 #endif // KIRAZ_AST_OPERATOR_H
