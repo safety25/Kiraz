@@ -9,6 +9,7 @@
 #include <kiraz/token/Literal.h>
 #include <kiraz/token/Operator.h>
 #include <kiraz/token/FuncNode.h>
+#include <kiraz/ast/testModule.h>
 
 int yyerror(const char *msg);
 extern std::shared_ptr<Token> curtoken;
@@ -47,6 +48,9 @@ extern int yylineno;
 %token OP_LT
 %token OP_LE
 
+%start module
+
+
 %%
 
 stmt:
@@ -69,6 +73,16 @@ expr:
     | type
     ;
 
+module:
+    | { 
+        Node::reset_root(); 
+        $$ = nullptr; 
+    }
+    | stmt { 
+        $$ = Node::add<ast::Module>($1); 
+    }
+;
+
 assign_stmt: 
     type OP_ASSIGN expr { $$ = Node::add<ast::AssignNode>($1, $3); }
 
@@ -82,15 +96,15 @@ arg_list:
     | {
         $$ = Node::add<ast::FuncArgs>();
     }
-    | IDENTIFIER OP_COLON type {
+    | type OP_COLON type {
         auto args = Node::add<ast::FuncArgs>();
-        args->add_argument(Node::add<ast::ArgNode>(Node::add<ast::Identifier>(curtoken), $3));
+        args->add_argument(Node::add<ast::ArgNode>($1, $3));  
         $$ = args;
     }
-    | arg_list OP_COMMA IDENTIFIER OP_COLON type {
+    | arg_list OP_COMMA type OP_COLON type {
         auto args = std::dynamic_pointer_cast<ast::FuncArgs>($1);
         if (args) {
-            args->add_argument(Node::add<ast::ArgNode>(Node::add<ast::Identifier>(curtoken), $5));
+            args->add_argument(Node::add<ast::ArgNode>($3, $5)); 
         }
         $$ = $1;
     }

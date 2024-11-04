@@ -7,6 +7,8 @@
 #include "parser.hpp"
 
 #include <kiraz/Node.h>
+#include <kiraz/ast/testModule.h>
+
 
 extern int yydebug;
 
