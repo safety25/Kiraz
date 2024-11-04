@@ -7,7 +7,7 @@ namespace ast {
 
 class Module : public Node {
 public:
-    explicit Module(Node::Ptr root) : Node(-1), m_root(root) {}
+    Module(Node::Ptr root) : Node(-1), m_root(root) {}
 
     std::string as_string() const override {
         if (!m_root) {

@@ -91,7 +91,6 @@ private:
     Node::Ptr m_body;         
 };
 
-
-} // namespace ast
+}
 
 #endif // KIRAZ_AST_FUNCNODE_H

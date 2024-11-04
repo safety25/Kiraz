@@ -2,7 +2,3 @@
 #include <cassert>
 #include <kiraz/token/Literal.h>
 #include <kiraz/token/keyword.h>
-
-namespace ast {
-
-} // namespace ast

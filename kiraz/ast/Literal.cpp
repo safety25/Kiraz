@@ -18,7 +18,6 @@ namespace ast {
         }
     }
 
-    
     Identifier::Identifier(Token::Ptr t) : Node(IDENTIFIER) {
         assert(t->get_id() == IDENTIFIER);
         auto token_id = std::static_pointer_cast<const token::Identifier>(t);

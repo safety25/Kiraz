@@ -34,6 +34,6 @@ private:
 
 
 
-} // namespace ast
+}
 
 #endif // KIRAZ_AST_LET_NODE_H

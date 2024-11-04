@@ -91,6 +91,9 @@ if_stmt:
     | KW_IF OP_LPAREN expr OP_RPAREN OP_LBRACE stmt_list OP_RBRACE KW_ELSE OP_LBRACE stmt_list OP_RBRACE {
         $$ = Node::add<ast::IfNode>($3, $6, $10);
     }
+    | KW_IF OP_LPAREN expr OP_RPAREN OP_LBRACE stmt_list OP_RBRACE KW_ELSE if_stmt {
+        $$ = Node::add<ast::IfNode>($3, $6, $9);
+    }
     ;
 
 while_stmt:
@@ -189,10 +192,9 @@ muldiv:
     ;
 
 posneg:
-    type
-    | L_INTEGER { $$ = Node::add<ast::Integer>(curtoken); }
-    | OP_PLUS expr { $$ = Node::add<ast::SignedNode>(OP_PLUS, $2); }
+    OP_PLUS expr { $$ = Node::add<ast::SignedNode>(OP_PLUS, $2); }
     | OP_MINUS expr { $$ = Node::add<ast::SignedNode>(OP_MINUS, $2); }
+    | L_INTEGER { $$ = Node::add<ast::Integer>(curtoken); }
     ;
 
 stmt: %empty
