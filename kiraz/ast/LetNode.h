@@ -12,10 +12,18 @@ public:
         : Node(KW_LET), m_name(name), m_type(type), m_initializer(initializer) {}
 
     std::string as_string() const override {
-        return fmt::format("Let(n={}, t={}, i={})", 
-                            m_name ? m_name->as_string() : "null",
-                            m_type ? m_type->as_string() : "null",
-                            m_initializer ? m_initializer->as_string() : "null");
+        std::string result = fmt::format("Let(n={}", m_name->as_string());
+
+    if (m_type) {
+        result += fmt::format(", t={}", m_type->as_string());
+    }
+    
+    if (m_initializer) {
+        result += fmt::format(", i={}", m_initializer->as_string());
+    }
+
+    result += ")";
+    return result;
     }
 
 private:
