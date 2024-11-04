@@ -50,6 +50,8 @@ extern int yylineno;
 
 %start module
 
+%token L_STRING
+
 
 %%
 
@@ -65,6 +67,7 @@ expr:
     OP_LPAREN expr OP_RPAREN { $$ = $2; }
     | addsub
     | posneg
+    | L_STRING { $$ = Node::add<ast::StringLiteral>(curtoken); }
     | expr OP_EQ expr { $$ = Node::add<ast::OpEq>($1, $3); }
     | expr OP_GT expr { $$ = Node::add<ast::OpGt>($1, $3); }
     | expr OP_GE expr { $$ = Node::add<ast::OpGe>($1, $3); }

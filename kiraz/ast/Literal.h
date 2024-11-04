@@ -38,6 +38,18 @@ private:
     std::string m_name;
 };
 
+class StringLiteral : public Node {
+public:
+    StringLiteral(Token::Ptr token);
+
+    std::string as_string() const override { 
+        return fmt::format("Str({})", m_value); 
+    }
+
+private:
+    std::string m_value;
+};
+
 
 }
 

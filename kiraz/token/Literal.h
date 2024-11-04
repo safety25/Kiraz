@@ -44,6 +44,20 @@ private:
     std::string m_name;
 };
 
+class StringLiteral : public Token {
+public:
+    StringLiteral(std::string_view value) : Token(L_STRING), m_value(value) {}
+
+    std::string as_string() const override {
+        return fmt::format("Str({})", m_value);
+    }
+
+    auto get_value() const { return m_value; }
+
+private:
+    std::string m_value;
+};
+
 }
 
 #endif // KIRAZ_TOKEN_LITERAL_H

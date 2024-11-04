@@ -25,4 +25,10 @@ namespace ast {
         m_name = token_id->get_name();
     }
 
+    StringLiteral::StringLiteral(Token::Ptr token) : Node(L_STRING) {
+        assert(token->get_id() == L_STRING); 
+        auto token_str = std::static_pointer_cast<const token::StringLiteral>(token);
+        m_value = token_str->get_value();
+    }
+
 }

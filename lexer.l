@@ -43,7 +43,27 @@ extern std::shared_ptr<Token> curtoken;
 
 [a-zA-Z_][a-zA-Z0-9_]* {colno += yyleng; curtoken = Token::New<Identifier>(yytext); return IDENTIFIER; }
 
+\"([^\"\\]|\\[\"\\n])*\" {
+    colno += yyleng;
+    std::string str_value(yytext + 1, yyleng - 2); 
+    std::string processed_str;
 
+    for (size_t i = 0; i < str_value.length(); ++i) {
+        if (str_value[i] == '\\' && i + 1 < str_value.length()) {
+            switch (str_value[i + 1]) {
+                case 'n': processed_str += '\n'; ++i; break;
+                case 't': processed_str += '\t'; ++i; break;
+                case '\\': processed_str += '\\'; ++i; break;
+                case '"': processed_str += '"'; ++i; break;
+                default: break; 
+            }
+        } else {
+            processed_str += str_value[i];
+        }
+    }
+    curtoken = Token::New<token::StringLiteral>(processed_str);
+    return L_STRING;
+}
 
 
 [ \n\t]+ {colno += yyleng;}
