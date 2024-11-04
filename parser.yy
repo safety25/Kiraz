@@ -10,6 +10,7 @@
 #include <kiraz/token/Operator.h>
 #include <kiraz/token/FuncNode.h>
 #include <kiraz/ast/testModule.h>
+#include <kiraz/ast/KeyNodes.h>
 
 int yyerror(const char *msg);
 extern std::shared_ptr<Token> curtoken;
@@ -52,6 +53,10 @@ extern int yylineno;
 
 %token L_STRING
 
+%token KW_IF      
+%token KW_ELSE
+%token KW_WHILE
+%token KW_IMPORT
 
 %%
 
@@ -59,7 +64,10 @@ stmt:
     OP_LPAREN stmt OP_RPAREN { $$ = $2; }
     | let_stmt
     | func_stmt
+    | import_stmt OP_SCOLON
     | assign_stmt OP_SCOLON
+    | if_stmt OP_SCOLON
+    | while_stmt OP_SCOLON
     | expr OP_SCOLON
     ;
 
@@ -74,6 +82,27 @@ expr:
     | expr OP_LT expr { $$ = Node::add<ast::OpLt>($1, $3); }
     | expr OP_LE expr { $$ = Node::add<ast::OpLe>($1, $3); }
     | type
+    ;
+
+if_stmt:
+    KW_IF OP_LPAREN expr OP_RPAREN OP_LBRACE stmt_list OP_RBRACE {
+        $$ = Node::add<ast::IfNode>($3, $6, nullptr); 
+    }
+    | KW_IF OP_LPAREN expr OP_RPAREN OP_LBRACE stmt_list OP_RBRACE KW_ELSE OP_LBRACE stmt_list OP_RBRACE {
+        $$ = Node::add<ast::IfNode>($3, $6, $10);
+    }
+    ;
+
+while_stmt:
+    KW_WHILE OP_LPAREN expr OP_RPAREN OP_LBRACE stmt_list OP_RBRACE {
+        $$ = Node::add<ast::WhileNode>($3, $6);
+    }
+    ;
+
+import_stmt:
+    KW_IMPORT type {
+        $$ = Node::add<ast::ImportNode>($2);
+    }
     ;
 
 module:
