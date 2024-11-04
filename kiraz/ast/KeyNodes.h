@@ -54,6 +54,22 @@ private:
     Node::Ptr m_name; // İçe aktarılan modül veya dosyanın adı
 };
 
+class ClassNode : public Node {
+public:
+    ClassNode(Node::Ptr name, Node::Ptr stmt_list)
+        : Node(KW_CLASS), m_name(name), m_stmt_list(stmt_list) {}
+
+    std::string as_string() const override {
+        std::string name_str = m_name ? m_name->as_string() : "null";
+        std::string stmt_list_str = m_stmt_list ? m_stmt_list->as_string() : "[]";
+        return fmt::format("Class(n={}, s={})", name_str, stmt_list_str);
+    }
+
+private:
+    Node::Ptr m_name;
+    Node::Ptr m_stmt_list;
+};
+
 
 } 
 

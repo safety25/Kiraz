@@ -49,6 +49,12 @@ public:
     std::string as_string() const override { return "KW_IMPORT"; }
 };
 
+class KwClass : public Keyword {
+public:
+    KwClass() : Keyword(KW_CLASS) {}
+    std::string as_string() const override { return "KW_CLASS"; }
+};
+
 }
 
 #endif // KIRAZ_TOKEN_KEYWORD_H

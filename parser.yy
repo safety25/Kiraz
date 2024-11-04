@@ -57,7 +57,7 @@ extern int yylineno;
 %token KW_ELSE
 %token KW_WHILE
 %token KW_IMPORT
-
+%token KW_CLASS
 %%
 
 stmt:
@@ -68,6 +68,7 @@ stmt:
     | assign_stmt OP_SCOLON
     | if_stmt OP_SCOLON
     | while_stmt OP_SCOLON
+    | class_stmt OP_SCOLON 
     | expr OP_SCOLON
     ;
 
@@ -82,6 +83,12 @@ expr:
     | expr OP_LT expr { $$ = Node::add<ast::OpLt>($1, $3); }
     | expr OP_LE expr { $$ = Node::add<ast::OpLe>($1, $3); }
     | type
+    ;
+    
+class_stmt:
+    KW_CLASS type OP_LBRACE stmt_list OP_RBRACE {
+        $$ = Node::add<ast::ClassNode>($2, $4);  // ClassNode oluşturma
+    }
     ;
 
 if_stmt:
