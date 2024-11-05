@@ -69,6 +69,7 @@ stmt:
     | if_stmt OP_SCOLON
     | while_stmt OP_SCOLON
     | class_stmt OP_SCOLON 
+    | combined_stmt
     | expr OP_SCOLON
     ;
 
@@ -84,7 +85,16 @@ expr:
     | expr OP_LE expr { $$ = Node::add<ast::OpLe>($1, $3); }
     | type
     ;
-    
+
+combined_stmt:
+    import_stmt OP_SCOLON class_stmt OP_SCOLON {
+        auto module_node = Node::add<ast::Combined>();
+        module_node->add_node($1);  
+        module_node->add_node($3);
+        $$ = module_node;
+    }
+    ;
+
 class_stmt:
     KW_CLASS type OP_LBRACE stmt_list OP_RBRACE {
         $$ = Node::add<ast::ClassNode>($2, $4);  // ClassNode oluşturma
