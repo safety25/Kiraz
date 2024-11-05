@@ -55,6 +55,13 @@ public:
     std::string as_string() const override { return "KW_CLASS"; }
 };
 
+class KwReturn : public Keyword {
+public:
+    KwReturn() : Keyword(KW_RETURN) {}
+    std::string as_string() const override { return "KW_RETURN"; }
+};
+
+
 }
 
 #endif // KIRAZ_TOKEN_KEYWORD_H

@@ -32,6 +32,7 @@ extern std::shared_ptr<Token> curtoken;
 "while" { colno += yyleng; curtoken = Token::New<KwWhile>(); return KW_WHILE; }
 "import" { colno += yyleng; curtoken = Token::New<KwImport>(); return KW_IMPORT; }
 "class"  { colno += yyleng; curtoken = Token::New<KwClass>(); return KW_CLASS; }
+"return" { colno += yyleng; curtoken = Token::New<KwReturn>(); return KW_RETURN; }
 
 "," { colno += yyleng; curtoken = Token::New<OpComma>(); return OP_COMMA; }
 ";" { colno += yyleng; curtoken = Token::New<OpScolon>(); return OP_SCOLON; }

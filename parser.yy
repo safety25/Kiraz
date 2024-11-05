@@ -58,6 +58,8 @@ extern int yylineno;
 %token KW_WHILE
 %token KW_IMPORT
 %token KW_CLASS
+%token KW_RETURN
+
 %%
 
 stmt:
@@ -69,6 +71,7 @@ stmt:
     | if_stmt OP_SCOLON
     | while_stmt OP_SCOLON
     | class_stmt OP_SCOLON 
+    | return_stmt
     | combined_stmt
     | expr OP_SCOLON
     ;
@@ -86,6 +89,10 @@ expr:
     | type
     ;
 
+return_stmt:
+    KW_RETURN expr OP_SCOLON { $$ = Node::add<ast::ReturnNode>($2); }
+;
+
 combined_stmt:
     import_stmt OP_SCOLON class_stmt OP_SCOLON {
         auto module_node = Node::add<ast::Combined>();
@@ -97,7 +104,7 @@ combined_stmt:
 
 class_stmt:
     KW_CLASS type OP_LBRACE stmt_list OP_RBRACE {
-        $$ = Node::add<ast::ClassNode>($2, $4);  // ClassNode oluşturma
+        $$ = Node::add<ast::ClassNode>($2, $4); 
     }
     ;
 

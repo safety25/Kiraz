@@ -93,6 +93,19 @@ private:
     std::vector<Node::Ptr> m_nodes;  
 };
 
+class ReturnNode : public Node {
+public:
+    explicit ReturnNode(Node::Ptr value)
+        : Node(KW_RETURN), m_value(value) {}
+
+    std::string as_string() const override {
+        return fmt::format("Return({})", m_value ? m_value->as_string() : "null");
+    }
+
+private:
+    Node::Ptr m_value;
+};
+
 
 } 
 
