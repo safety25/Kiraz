@@ -49,6 +49,8 @@ extern int yylineno;
 %token OP_LT
 %token OP_LE
 
+%token OP_DOT
+
 %start module
 
 %token L_STRING
@@ -77,16 +79,39 @@ stmt:
     ;
 
 expr:
-    OP_LPAREN expr OP_RPAREN { $$ = $2; }
-    | addsub
+    addsub
     | posneg
+    | OP_LPAREN expr OP_RPAREN { $$ = $2; }
     | L_STRING { $$ = Node::add<ast::StringLiteral>(curtoken); }
     | expr OP_EQ expr { $$ = Node::add<ast::OpEq>($1, $3); }
     | expr OP_GT expr { $$ = Node::add<ast::OpGt>($1, $3); }
     | expr OP_GE expr { $$ = Node::add<ast::OpGe>($1, $3); }
     | expr OP_LT expr { $$ = Node::add<ast::OpLt>($1, $3); }
     | expr OP_LE expr { $$ = Node::add<ast::OpLe>($1, $3); }
+    | expr OP_DOT IDENTIFIER { $$ = Node::add<ast::DotNode>($1, Node::add<ast::Identifier>(curtoken)); }
+    | call_expr
     | type
+    ;
+
+call_expr:
+    expr OP_LPAREN call_arg_list OP_RPAREN {
+        $$ = Node::add<ast::CallNode>($1, $3); 
+    }
+    ;
+
+call_arg_list:
+    | expr { 
+        auto args = Node::add<ast::FuncArgs>(); 
+        args->add_argument($1); 
+        $$ = args; 
+    }
+    | call_arg_list OP_COMMA expr { 
+        auto args = std::static_pointer_cast<ast::FuncArgs>($1); 
+        if (args) {
+            args->add_argument($3); 
+        }
+        $$ = $1; 
+    }
     ;
 
 return_stmt:
@@ -161,7 +186,7 @@ arg_list:
         $$ = args;
     }
     | arg_list OP_COMMA type OP_COLON type {
-        auto args = std::dynamic_pointer_cast<ast::FuncArgs>($1);
+        auto args = std::static_pointer_cast<ast::FuncArgs>($1);
         if (args) {
             args->add_argument(Node::add<ast::ArgNode>($3, $5)); 
         }
@@ -179,7 +204,7 @@ stmt_list:
         $$ = stmts;
     }
     | stmt_list stmt {
-        auto stmts = std::dynamic_pointer_cast<ast::NodeList>($1);
+        auto stmts = std::static_pointer_cast<ast::NodeList>($1);
         if (stmts) {
             stmts->add_node($2);
         }

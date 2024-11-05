@@ -41,6 +41,8 @@ extern std::shared_ptr<Token> curtoken;
 "}" { colno += yyleng; curtoken = Token::New<OpRbrace>(); return OP_RBRACE; }
 "=" { colno += yyleng; curtoken = Token::New<OpAssign>(); return OP_ASSIGN; }
 
+"." { colno += yyleng; curtoken = Token::New<OpDot>(); return OP_DOT; }
+
 "==" { colno += yyleng; curtoken = Token::New<OpEq>(); return OP_EQ; }
 ">"  { colno += yyleng; curtoken = Token::New<OpGt>(); return OP_GT; }
 ">=" { colno += yyleng; curtoken = Token::New<OpGe>(); return OP_GE; }

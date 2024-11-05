@@ -106,6 +106,33 @@ private:
     Node::Ptr m_value;
 };
 
+class DotNode : public Node {
+public:
+    DotNode(Node::Ptr left, Node::Ptr right)
+        : Node(OP_DOT), m_left(left), m_right(right) {}
+
+    std::string as_string() const override {
+        return fmt::format("Dot(l={}, r={})", m_left->as_string(), m_right->as_string());
+    }
+
+private:
+    Node::Ptr m_left, m_right;
+};
+
+class CallNode : public Node {
+public:
+    CallNode(Node::Ptr name, Node::Ptr args)
+        : Node(-1), m_name(name), m_args(args) {}
+
+    std::string as_string() const override {
+        return fmt::format("Call(n={}, a={})", m_name->as_string(), m_args->as_string());
+    }
+
+private:
+    Node::Ptr m_name;  
+    Node::Ptr m_args;
+};
+
 
 } 
 
