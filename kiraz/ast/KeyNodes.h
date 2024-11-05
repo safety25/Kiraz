@@ -37,8 +37,8 @@ public:
     }
 
 private:
-    Node::Ptr m_condition;    // Döngü koşulu
-    Node::Ptr m_repeat;       // Döngü içinde tekrar eden ifadeler
+    Node::Ptr m_condition;    
+    Node::Ptr m_repeat;       
 };
 
 class ImportNode : public Node {
@@ -51,7 +51,7 @@ public:
     }
 
 private:
-    Node::Ptr m_name; // İçe aktarılan modül veya dosyanın adı
+    Node::Ptr m_name; 
 };
 
 class ClassNode : public Node {
@@ -68,6 +68,29 @@ public:
 private:
     Node::Ptr m_name;
     Node::Ptr m_stmt_list;
+};
+
+
+class Combined : public Node {
+public:
+    Combined() : Node(-2) {}
+
+    void add_node(Node::Ptr node) {
+        m_nodes.push_back(node);
+    }
+
+    std::string as_string() const override {
+        std::string result = "";
+        for (size_t i = 0; i < m_nodes.size(); ++i) {
+            result += m_nodes[i]->as_string();
+            if (i < m_nodes.size() - 1) result += ", ";
+        }
+        result += "";
+        return result;
+    }
+
+private:
+    std::vector<Node::Ptr> m_nodes;  
 };
 
 
