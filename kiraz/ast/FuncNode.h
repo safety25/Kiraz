@@ -34,14 +34,17 @@ public:
     }
 
     std::string as_string() const override {
-        std::string result = "FuncArgs([";
-        for (size_t i = 0; i < m_args.size(); ++i) {
-            result += m_args[i]->as_string();
-            if (i < m_args.size() - 1) result += ", ";
-        }
-        result += "])";
-        return result;
+    if (m_args.empty()) {
+        return "[]";
     }
+    std::string result = "FuncArgs([";
+    for (size_t i = 0; i < m_args.size(); ++i) {
+        result += m_args[i]->as_string();
+        if (i < m_args.size() - 1) result += ", ";
+    }
+    result += "])";
+    return result;
+}
 
 private:
     std::vector<Node::Ptr> m_args;
