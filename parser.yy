@@ -83,8 +83,13 @@ muldiv:
     ;
 
 posneg:
-    OP_PLUS expr { $$ = Node::add<ast::SignedNode>(OP_PLUS, $2); }
-    | OP_MINUS expr { $$ = Node::add<ast::SignedNode>(OP_MINUS, $2); }
+    OP_PLUS selection { $$ = Node::add<ast::SignedNode>(OP_PLUS, $2); }
+    | OP_MINUS selection { $$ = Node::add<ast::SignedNode>(OP_MINUS, $2); }
+    ;
+
+selection:
+     L_INTEGER { $$ = Node::add<ast::Integer>(curtoken); }
+    | OP_LPAREN expr OP_RPAREN { $$ = $2; }
     ;
 
 call_expr:
@@ -200,7 +205,6 @@ reverse_stmt_list:
         stmts->add_node($2);
         $$ = stmts;
     }
-    
     ;
 
 let_stmt:
