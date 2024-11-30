@@ -59,6 +59,10 @@ public:
         m_nodes.push_back(node);
     }
 
+    const std::vector<Node::Ptr>& get_list() const {
+        return m_nodes;
+    }
+
     std::string as_string() const override {
         std::string result = "[";
         for (size_t i = 0; i < m_nodes.size(); ++i) {

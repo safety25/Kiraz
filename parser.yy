@@ -190,7 +190,6 @@ stmt_list:
         stmts->add_node($1);
         $$ = stmts;
     }
-    
     ;
 
 reverse_stmt_list:

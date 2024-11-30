@@ -3,6 +3,8 @@
 
 #include <kiraz/Node.h>
 #include <kiraz/Compiler.h>
+#include <kiraz/ast/FuncNode.h>
+
 
 namespace ast {
 
