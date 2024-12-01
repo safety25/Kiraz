@@ -2,7 +2,9 @@
 #define KIRAZ_AST_IFNODE_H
 
 #include <kiraz/Node.h>
+#include <kiraz/Compiler.h>
 #include <string>
+
 
 namespace ast {
 
@@ -36,9 +38,26 @@ public:
                            m_repeat ? m_repeat->as_string() : "[]");
     }
 
+    Node::Ptr compute_stmt_type(SymbolTable &st) override {
+    if (auto ret = m_condition->compute_stmt_type(st)) {
+        return ret; 
+    }
+
+    if (ScopeType::Module == st.get_scope_type()){
+        return set_error("Misplaced while statement");
+    } 
+
+    if (auto ret = m_repeat->compute_stmt_type(st)) {
+        return ret;  
+    }
+
+    return nullptr; 
+}
+
 private:
     Node::Ptr m_condition;    
-    Node::Ptr m_repeat;       
+    Node::Ptr m_repeat;
+    std::unique_ptr<SymbolTable> m_symtab;       
 };
 
 class ImportNode : public Node {
@@ -68,6 +87,8 @@ public:
 private:
     Node::Ptr m_name;
     Node::Ptr m_stmt_list;
+    Node::Cptr m_parent;
+    std::unique_ptr<SymbolTable> m_symtab;
 };
 
 

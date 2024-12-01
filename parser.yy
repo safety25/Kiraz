@@ -105,7 +105,7 @@ call_arg_list:
         $$ = args; 
     }
     | call_arg_list OP_COMMA expr { 
-        auto args = std::static_pointer_cast<ast::FuncArgs>($1); 
+        auto args = std::dynamic_pointer_cast<ast::FuncArgs>($1); 
         if (args) {
             args->add_argument($3); 
         }
@@ -172,7 +172,7 @@ arg_list:
         $$ = args;
     }
     | arg_list OP_COMMA type OP_COLON type {
-        auto args = std::static_pointer_cast<ast::FuncArgs>($1);
+        auto args = std::dynamic_pointer_cast<ast::FuncArgs>($1);
         if (args) {
             args->add_argument(Node::add<ast::ArgNode>($3, $5)); 
         }
@@ -186,7 +186,7 @@ arg_list:
 stmt_list:
     { $$ = Node::add<ast::NodeList>(); }
     | stmt stmt_list {
-        auto stmts = std::static_pointer_cast<ast::NodeList>($2);
+        auto stmts = std::dynamic_pointer_cast<ast::NodeList>($2);
         stmts->add_node($1);
         $$ = stmts;
     }
@@ -200,7 +200,7 @@ reverse_stmt_list:
         $$ = stmts;
     }
     | reverse_stmt_list stmt {
-        auto stmts = std::static_pointer_cast<ast::NodeList>($1);
+        auto stmts = std::dynamic_pointer_cast<ast::NodeList>($1);
         stmts->add_node($2);
         $$ = stmts;
     }
