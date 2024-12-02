@@ -108,8 +108,32 @@ public:
         return fmt::format("Import({})", m_name ? m_name->as_string() : "null");
     }
 
+
+    Node::Ptr compute_stmt_type(SymbolTable &st) override {
+        // Sembol tablosunda import edilen modülün varlığını kontrol et
+    if (!st.get_symbol(m_name->as_string())) {
+        return set_error(fmt::format("Identifier '{}' is not found", m_name->as_string()));
+    }
+    return nullptr; 
+    }
+    
+
 private:
     Node::Ptr m_name; 
+};
+
+class CallNode : public Node {
+public:
+    CallNode(Node::Ptr name, Node::Ptr args)
+        : Node(-1), m_name(name), m_args(args) {}
+
+    std::string as_string() const override {
+        return fmt::format("Call(n={}, a={})", m_name->as_string(), m_args->as_string());
+    }
+
+private:
+    Node::Ptr m_name;  
+    Node::Ptr m_args;
 };
 
 class ClassNode : public Node {
@@ -243,19 +267,7 @@ private:
     Node::Ptr m_left, m_right;
 };
 
-class CallNode : public Node {
-public:
-    CallNode(Node::Ptr name, Node::Ptr args)
-        : Node(-1), m_name(name), m_args(args) {}
 
-    std::string as_string() const override {
-        return fmt::format("Call(n={}, a={})", m_name->as_string(), m_args->as_string());
-    }
-
-private:
-    Node::Ptr m_name;  
-    Node::Ptr m_args;
-};
 
 
 } 
