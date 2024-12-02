@@ -4,6 +4,7 @@
 #include <kiraz/Node.h>
 #include <string>
 #include <kiraz/Compiler.h>
+#include <kiraz/ast/KeyNodes.h>
 
 namespace ast {
 
@@ -62,6 +63,14 @@ public:
                 }
             }
         }
+
+         if (auto while_node = std::dynamic_pointer_cast<const ast::WhileNode>(m_initializer)) {
+                return set_error("While loops cannot be used as initializer expressions in LetNode");
+            }
+            if (auto if_node = std::dynamic_pointer_cast<const ast::IfNode>(m_initializer)) {
+                return set_error("If expressions cannot be used as initializer expressions in LetNode");
+            }
+        
 
         return shared_from_this(); 
     }

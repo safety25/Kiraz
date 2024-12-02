@@ -5,6 +5,7 @@
 #include <kiraz/Compiler.h>
 #include <string>
 #include "Literal.h"
+#include <kiraz/ast/FuncNode.h>
 
 
 namespace ast {
