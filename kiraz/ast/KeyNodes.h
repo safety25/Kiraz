@@ -126,32 +126,48 @@ public:
     Node::Ptr compute_stmt_type(SymbolTable &st) override {
         set_cur_symtab(st.get_cur_symtab());
 
-        if (auto class_name = std::dynamic_pointer_cast<ast::Identifier>(m_name)) {
-            
+        if (auto class_name = std::dynamic_pointer_cast<const ast::Identifier>(m_name)) {
             if (st.get_symbol(class_name->get_name())) {
                 return set_error(fmt::format("Class '{}' is already defined", class_name->get_name()));
             }
 
-            
             st.add_symbol(class_name->get_name(), shared_from_this());
         } else {
             return set_error("Class name must be an identifier");
         }
 
-        
+        if (m_parent) {
+            if (auto parent_class_name = std::dynamic_pointer_cast<const ast::Identifier>(m_parent)) {
+                if (!st.get_symbol(parent_class_name->get_name())) {
+                    return set_error(fmt::format("Type '{}' is not found", parent_class_name->get_name()));
+                }
+            } else {
+                return set_error("Class parent must be an identifier");
+            }
+        }
+
         if (m_stmt_list) {
             m_stmt_list->compute_stmt_type(st);
         }
 
-        return shared_from_this();  
+            if (auto class_name = std::dynamic_pointer_cast<const ast::Identifier>(m_name)) {
+            if (st.get_symbol(class_name->get_name())) {
+                return set_error(fmt::format("Identifier '{}' is already in symtab", class_name->get_name()));
+            }
+        }
+
+        
+
+        return shared_from_this();
     }
 
 private:
-    Node::Ptr m_name;
-    Node::Ptr m_stmt_list;
-    Node::Cptr m_parent;
-    std::unique_ptr<SymbolTable> m_symtab;
+    Node::Ptr m_name;        
+    Node::Ptr m_stmt_list;   
+    Node::Cptr m_parent;    
+    std::unique_ptr<SymbolTable> m_symtab;  
 };
+
 
 
 class Combined : public Node {
@@ -184,6 +200,22 @@ public:
     std::string as_string() const override {
         return fmt::format("Return({})", m_value ? m_value->as_string() : "null");
     }
+
+     Node::Ptr compute_stmt_type(SymbolTable &st) override {
+        auto parent = dynamic_cast<ast::FuncNode*>(get_parent());
+        if (!parent) {
+            return set_error("Misplaced return statement");  
+        }
+
+        if (m_value) {
+            if (auto ret = m_value->compute_stmt_type(st)) {
+                return ret;  
+            }
+        }
+
+        return nullptr;  
+    }
+
 
 private:
     Node::Ptr m_value;
