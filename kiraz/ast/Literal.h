@@ -34,6 +34,12 @@ public:
 
     std::string as_string() const override { return fmt::format("Id({})", m_name); }
 
+
+    std::string get_name() const {
+        return m_name;  
+    }
+
+
 private:
     std::string m_name;
 };

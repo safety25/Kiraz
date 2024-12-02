@@ -4,6 +4,7 @@
 #include <kiraz/Node.h>
 #include <kiraz/Compiler.h>
 #include <string>
+#include "Literal.h"
 
 
 namespace ast {
@@ -62,6 +63,7 @@ private:
     Node::Ptr m_condition;    
     Node::Ptr m_thenBranch;   
     Node::Ptr m_elseBranch;
+    std::unique_ptr<SymbolTable> m_symtab;          
 };
 
 class WhileNode : public Node {
@@ -112,13 +114,36 @@ private:
 
 class ClassNode : public Node {
 public:
-    ClassNode(Node::Ptr name, Node::Ptr stmt_list)
-        : Node(KW_CLASS), m_name(name), m_stmt_list(stmt_list) {}
+    ClassNode(Node::Ptr name, Node::Ptr stmt_list, Node::Cptr parent = nullptr)
+        : Node(KW_CLASS), m_name(name), m_stmt_list(stmt_list), m_parent(parent) {}
 
     std::string as_string() const override {
         std::string name_str = m_name ? m_name->as_string() : "null";
         std::string stmt_list_str = m_stmt_list ? m_stmt_list->as_string() : "[]";
         return fmt::format("Class(n={}, s={})", name_str, stmt_list_str);
+    }
+
+    Node::Ptr compute_stmt_type(SymbolTable &st) override {
+        set_cur_symtab(st.get_cur_symtab());
+
+        if (auto class_name = std::dynamic_pointer_cast<ast::Identifier>(m_name)) {
+            
+            if (st.get_symbol(class_name->get_name())) {
+                return set_error(fmt::format("Class '{}' is already defined", class_name->get_name()));
+            }
+
+            
+            st.add_symbol(class_name->get_name(), shared_from_this());
+        } else {
+            return set_error("Class name must be an identifier");
+        }
+
+        
+        if (m_stmt_list) {
+            m_stmt_list->compute_stmt_type(st);
+        }
+
+        return shared_from_this();  
     }
 
 private:
@@ -159,22 +184,6 @@ public:
     std::string as_string() const override {
         return fmt::format("Return({})", m_value ? m_value->as_string() : "null");
     }
-
-    Node::Ptr compute_stmt_type(SymbolTable &st) override {
-        auto parent = dynamic_cast<ast::FuncNode*>(get_parent());
-        if (!parent) {
-            return set_error("Misplaced return statement");  
-        }
-
-        if (m_value) {
-            if (auto ret = m_value->compute_stmt_type(st)) {
-                return ret;  
-            }
-        }
-
-        return nullptr;  
-    }
-
 
 private:
     Node::Ptr m_value;
