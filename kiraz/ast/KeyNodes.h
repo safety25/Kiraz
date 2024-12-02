@@ -206,10 +206,19 @@ public:
         if (!parent) {
             return set_error("Misplaced return statement");  
         }
+        
+        auto func_name = parent->get_name();  
+        auto return_type = parent->get_return_type();  
+
+        if (!return_type) {
+            return set_error(fmt::format("Return type '{}' of function '{}' is not found", return_type->as_string(), func_name->as_string()));
+        }
 
         if (m_value) {
-            if (auto ret = m_value->compute_stmt_type(st)) {
-                return ret;  
+            auto value_type = m_value->compute_stmt_type(st);
+            if (value_type && value_type != return_type) {
+                return set_error(fmt::format("Return statement type '{}' does not match function return type '{}'",
+                                             value_type->as_string(), return_type->as_string()));
             }
         }
 

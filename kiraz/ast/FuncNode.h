@@ -91,6 +91,14 @@ public:
                            m_body ? m_body->as_string() : "[]");
     }
 
+    Node::Ptr get_return_type() const { 
+        return m_returnType; 
+    }
+
+    Node::Ptr get_name() const { 
+        return m_name; 
+    }
+
 private:
     Node::Ptr m_name;        
     Node::Ptr m_args;         
