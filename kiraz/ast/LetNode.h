@@ -40,15 +40,38 @@ public:
             return set_error("LetNode name must be an identifier");
         }
 
+        if (m_type) {
+            if (auto type_name = std::dynamic_pointer_cast<const ast::Identifier>(m_type)) {
+                if (!st.get_symbol(type_name->get_name())) {
+                    return set_error(fmt::format("Type '{}' not found", type_name->get_name()));
+                }
+            } else {
+                return set_error("LetNode type must be an identifier");
+            }
+        }
+
+        if (m_initializer) {
+            if (auto initializer_type = m_initializer->compute_stmt_type(st)) {
+                if (m_type) {
+                    if (auto expected_type = std::dynamic_pointer_cast<const ast::Identifier>(m_type)) {
+                        if (expected_type->get_name() != initializer_type->as_string()) {
+                            return set_error(fmt::format("Initializer type '{}' is not compatible with expected type '{}'",
+                                                         initializer_type->as_string(), expected_type->get_name()));
+                        }
+                    }
+                }
+            }
+        }
+
         return shared_from_this(); 
     }
 
 private:
-    Node::Ptr m_name;        
-    Node::Ptr m_type;         
-    Node::Ptr m_initializer;  
+    Node::Ptr m_name;          
+    Node::Ptr m_type;          
+    Node::Ptr m_initializer;   
 };
 
-}  // namespace ast
+}
 
 #endif // KIRAZ_AST_LET_NODE_H
