@@ -21,10 +21,48 @@ public:
         return result;
     }
 
+    Node::Ptr compute_stmt_type(SymbolTable &st) override {
+    set_cur_symtab(st.get_cur_symtab());
+    
+    if (auto ret = m_condition->compute_stmt_type(st)) {
+        return ret; 
+    }
+
+    if (auto condition = std::dynamic_pointer_cast<ast::Integer>(m_condition)) {
+        return set_error("If only accepts tests of type 'Boolean'");
+    }
+
+    if (auto condition = std::dynamic_pointer_cast<ast::StringLiteral>(m_condition)) {
+        return set_error("If only accepts tests of type 'Boolean'");
+    }
+
+    if (auto condition = std::dynamic_pointer_cast<ast::Identifier>(m_condition)) {
+        return set_error("If only accepts tests of type 'Boolean'");
+    }
+
+    if (ScopeType::Module == st.get_scope_type() || ScopeType::Class == st.get_scope_type()) {
+        return set_error("Misplaced if statement");
+    }
+
+    if (auto ret = m_thenBranch->compute_stmt_type(st)) {
+        return ret; 
+    }
+
+    if (m_elseBranch) {
+        if (auto ret = m_elseBranch->compute_stmt_type(st)) {
+            return ret;
+        }
+    }
+
+    return nullptr;
+}
+
+
 private:
     Node::Ptr m_condition;    
     Node::Ptr m_thenBranch;   
-    Node::Ptr m_elseBranch;   
+    Node::Ptr m_elseBranch;
+    std::unique_ptr<SymbolTable> m_symtab;          
 };
 
 class WhileNode : public Node {

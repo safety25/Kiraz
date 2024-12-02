@@ -34,13 +34,13 @@ public:
                     return ret;
                 }
 
-                /*if (auto ret = stmt -> add_to_symtab_forward(*m_symtab)) {
+                if (auto ret = stmt -> add_to_symtab_forward(*m_symtab)) {
                     return ret;
 
-                    }*/
+                    }
                 }
 
-            /*for (const auto &stmt :static_cast<const NodeList &>(*m_root).get_list()){
+            for (const auto &stmt :static_cast<const NodeList &>(*m_root).get_list()){
                 if (auto ret = stmt -> add_to_symtab_ordered(st)) {
                     return ret;
 
@@ -53,7 +53,7 @@ public:
                 if (auto ret= stmt ->compute_stmt_type(st)){
                     return ret;
                 }
-            }*/
+            }
         }
         return nullptr;
     }
