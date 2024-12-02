@@ -62,7 +62,6 @@ private:
     Node::Ptr m_condition;    
     Node::Ptr m_thenBranch;   
     Node::Ptr m_elseBranch;
-    std::unique_ptr<SymbolTable> m_symtab;          
 };
 
 class WhileNode : public Node {
@@ -160,6 +159,22 @@ public:
     std::string as_string() const override {
         return fmt::format("Return({})", m_value ? m_value->as_string() : "null");
     }
+
+    Node::Ptr compute_stmt_type(SymbolTable &st) override {
+        auto parent = dynamic_cast<ast::FuncNode*>(get_parent());
+        if (!parent) {
+            return set_error("Misplaced return statement");  
+        }
+
+        if (m_value) {
+            if (auto ret = m_value->compute_stmt_type(st)) {
+                return ret;  
+            }
+        }
+
+        return nullptr;  
+    }
+
 
 private:
     Node::Ptr m_value;

@@ -50,7 +50,7 @@ stmt:
     | if_stmt OP_SCOLON
     | while_stmt OP_SCOLON
     | class_stmt OP_SCOLON 
-    | return_stmt
+    | return_stmt 
     | combined_stmt
     | expr OP_SCOLON
     ;

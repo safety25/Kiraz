@@ -28,6 +28,14 @@ public:
     void print() { fmt::print("{}\n", as_string()); }
 
     auto get_id() const { return m_id; }
+    
+    Node* get_parent() const {
+        return m_parent;
+    }
+    void set_parent(Node* parent) {
+        m_parent = parent;
+    }
+
     void set_pos(int l, int c) {
         m_line = l;
         m_col = c;
@@ -168,6 +176,7 @@ private:
     std::string m_error;
     int m_line = 0;
     int m_col = 0;
+    Node* m_parent;
 };
 
 template <>
