@@ -57,25 +57,26 @@ public:
         }
 
         if (m_initializer) {
-            if (auto initializer_type = m_initializer->compute_stmt_type(st)) {
+                if (auto while_node = std::dynamic_pointer_cast<const ast::WhileNode>(m_initializer)) {
+                    return nullptr;
+                }
+                
+                else if (auto if_node = std::dynamic_pointer_cast<const ast::IfNode>(m_initializer)) {
+                    return nullptr;
+                }
+                else {
+                if (auto initializer_type = m_initializer->compute_stmt_type(st)) {
                 if (m_type) {
-                    if (auto expected_type = std::dynamic_pointer_cast<const ast::Identifier>(m_type)) {
-                        if (expected_type->get_name() != initializer_type->as_string()) {
-                            return set_error(fmt::format("Initializer type '{}' is not compatible with expected type '{}'",
-                                                         initializer_type->as_string(), expected_type->get_name()));
+                    if (auto type_name = std::dynamic_pointer_cast<const ast::Identifier>(m_type)) {
+                        if (initializer_type->as_string() != type_name->as_string()) {
+                            return set_error(fmt::format("Initializer type '{}' doesn't match explicit type '{}'", 
+                            initializer_type->as_string(), type_name->as_string()));
                         }
                     }
                 }
             }
         }
-
-         if (auto while_node = std::dynamic_pointer_cast<const ast::WhileNode>(m_initializer)) {
-                return set_error("While loops cannot be used as initializer expressions in LetNode");
-            }
-            if (auto if_node = std::dynamic_pointer_cast<const ast::IfNode>(m_initializer)) {
-                return set_error("If expressions cannot be used as initializer expressions in LetNode");
-            }
-        
+    } 
 
         return shared_from_this(); 
     }
