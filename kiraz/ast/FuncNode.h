@@ -19,6 +19,10 @@ public:
                            m_type ? m_type->as_string() : "null");
     }
 
+    std::string get_type() const override {
+        return m_type ? m_type->as_string() : "";  
+    }
+
 private:
     Node::Ptr m_name;
     Node::Ptr m_type;
@@ -29,9 +33,25 @@ class FuncArgs : public Node {
 public:
     FuncArgs() : Node(OP_LPAREN) {}
     
+    std::vector<Node::Ptr> get_list() const override {
+        return m_args;  
+    }
+
     void add_argument(Node::Ptr arg) {
         m_args.push_back(arg);
     }
+
+    size_t size() const {
+        return m_args.size(); 
+    }
+
+    Node::Ptr get_argument(size_t index) const {
+        if (index < m_args.size()) {
+            return m_args[index];  
+        }
+        return nullptr;
+    }
+    
 
     std::string as_string() const override {
     if (m_args.empty()) {
@@ -44,7 +64,7 @@ public:
     }
     result += "])";
     return result;
-}
+    }
 
 private:
     std::vector<Node::Ptr> m_args;
@@ -59,8 +79,8 @@ public:
         m_nodes.push_back(node);
     }
 
-    const std::vector<Node::Ptr>& get_list() const {
-        return m_nodes;
+    std::vector<Node::Ptr> get_list() const override {
+        return m_nodes; 
     }
 
     std::string as_string() const override {
@@ -97,6 +117,23 @@ public:
 
     Node::Ptr get_name() const { 
         return m_name; 
+    }
+
+    size_t get_param_count() const {
+        if (auto args = std::dynamic_pointer_cast<FuncArgs>(m_args)) {
+            return args->size(); 
+        }
+        return 0;
+    }
+
+    std::string get_param_type(size_t index) const {
+        if (auto args = std::dynamic_pointer_cast<FuncArgs>(m_args)) {
+            if (index < args->size()) {
+                auto arg = args->get_argument(index);
+                return arg->get_type(); 
+            }
+        }
+        return "";  
     }
 
 private:

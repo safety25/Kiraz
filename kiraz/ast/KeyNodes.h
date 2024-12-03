@@ -150,6 +150,13 @@ public:
             return set_error(fmt::format("Identifier '{}' is not found", funcIdentifier->get_name()));
         }
 
+        auto funcNode = std::dynamic_pointer_cast<ast::FuncNode>(funcSymbol->second);
+        auto paramCount = funcNode->get_param_count();
+        auto givenArgs = m_args->get_list(); 
+        if (paramCount != givenArgs.size()) {
+            return set_error(fmt::format("Call to function '{}' has wrong number of arguments", funcIdentifier->get_name()));
+        }
+
         return nullptr;
     }
 

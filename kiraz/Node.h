@@ -151,6 +151,14 @@ public:
         return m_error.empty() ? nullptr : shared_from_this();
     }
 
+    virtual std::string get_type() const {
+        return ""; 
+    }
+
+    virtual std::vector<Node::Ptr> get_list() const { 
+        return {};  
+    }
+
     const auto &get_stmt_type() const { return m_type; }
 
     void set_stmt_type(const Cptr &type) {
