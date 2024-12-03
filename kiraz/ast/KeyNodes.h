@@ -220,14 +220,18 @@ public:
             } 
         }
 
-        if (m_stmt_list) {
-            m_stmt_list->compute_stmt_type(st);
+       if (m_stmt_list) {
+        if (auto stmt_list_identifier = std::dynamic_pointer_cast<const ast::Identifier>(m_stmt_list)) {
+            if (!st.get_symbol(stmt_list_identifier->get_name())) {
+                return set_error(fmt::format("Identifier '{}.{}' is not found", class_name->get_name(), stmt_list_identifier->get_name()));
+            }
         }
+    }
 
             
         
 
-        return shared_from_this();
+        return nullptr;
     }
 
 private:
