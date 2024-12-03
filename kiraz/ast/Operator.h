@@ -57,6 +57,19 @@ class OpBinary : public Node {
 
                 return fmt::format("{}(l={}, r={})", opstr, get_left()->as_string(), get_right()->as_string());
         }
+        Node::Ptr check_type(SymbolTable &st) {
+            auto left_type = m_left->compute_stmt_type(st);
+            auto right_type = m_right->compute_stmt_type(st);
+
+            if (get_id() == OP_PLUS) {
+                if (left_type != right_type) {
+                    return set_error(fmt::format("Operator '+' not defined for types '{}' and '{}'", 
+                                                 left_type->as_string(), right_type->as_string()));
+                }
+            }
+
+            return nullptr;
+        }
 
 private:
     Node::Ptr m_left, m_right;
