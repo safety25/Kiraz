@@ -157,6 +157,15 @@ public:
             return set_error(fmt::format("Call to function '{}' has wrong number of arguments", funcIdentifier->get_name()));
         }
 
+        for (size_t i = 0; i < paramCount; ++i) {
+            auto paramType = funcNode->get_param_type(i);
+            auto argType = givenArgs[i]->get_type();
+            if (paramType != argType) {
+                return set_error(fmt::format("Argument {} in call to function '{}' has type '{}' which does not match definition type '{}'",
+                                             i + 1, funcIdentifier->get_name(), argType, paramType));
+            }
+        }
+
         return nullptr;
     }
 
