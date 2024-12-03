@@ -5,6 +5,8 @@
 #include <kiraz/Token.h>
 #include <vector>
 #include <memory>
+#include <unordered_set>
+#include <kiraz/ast/Literal.h>
 
 namespace ast {
 
@@ -23,6 +25,10 @@ public:
         return m_type ? m_type->as_string() : "";  
     }
 
+    Node::Ptr get_name() const {
+        return m_name;
+    }
+    
 private:
     Node::Ptr m_name;
     Node::Ptr m_type;
@@ -135,6 +141,38 @@ public:
         }
         return "";  
     }
+
+    Node::Ptr compute_stmt_type(SymbolTable &st) override {
+    set_cur_symtab(st.get_cur_symtab());
+    auto func_name = std::dynamic_pointer_cast<ast::Identifier>(m_name);
+
+    if (st.get_symbol(func_name->get_name())) {
+        return set_error(fmt::format("Function '{}' is already defined", func_name->get_name()));
+    }
+
+    st.add_symbol(func_name->get_name(), shared_from_this());
+    if (auto args = std::dynamic_pointer_cast<FuncArgs>(m_args)) {
+        std::unordered_set<std::string> seen_args;
+
+        for (const auto &arg : args->get_list()) {
+            auto arg_node = std::dynamic_pointer_cast<ast::ArgNode>(arg);
+            if (!arg_node) {
+                continue;
+            }
+
+            auto arg_name = std::dynamic_pointer_cast<ast::Identifier>(arg_node->get_name());
+            if (!arg_name) {
+                return set_error(fmt::format("Argument name is not valid in function '{}'", func_name->get_name()));
+            }
+
+            if (seen_args.count(arg_name->get_name())) {
+                return set_error(fmt::format("Identifier '{}' in argument list of function '{}' is already in symtab", arg_name->get_name(), func_name->get_name()));
+            }
+        }
+    }
+
+    return nullptr;  
+}
 
 private:
     Node::Ptr m_name;        
