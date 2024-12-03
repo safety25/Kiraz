@@ -111,7 +111,6 @@ public:
 
 
     Node::Ptr compute_stmt_type(SymbolTable &st) override {
-        // Sembol tablosunda import edilen modülün varlığını kontrol et
     if (!st.get_symbol(m_name->as_string())) {
         return set_error(fmt::format("Identifier '{}' is not found", m_name->as_string()));
     }
@@ -130,6 +129,28 @@ public:
 
     std::string as_string() const override {
         return fmt::format("Call(n={}, a={})", m_name->as_string(), m_args->as_string());
+    }
+
+    Node::Ptr compute_stmt_type(SymbolTable &st) override {
+        set_cur_symtab(st.get_cur_symtab());
+
+        if (auto ret = m_name->compute_stmt_type(st)) {
+            return ret;
+        }
+
+        auto funcIdentifier = std::dynamic_pointer_cast<ast::Identifier>(m_name);
+        if (!funcIdentifier) {
+            return set_error("Function name is not a valid identifier.");
+        }
+
+        auto curScope = st.get_cur_symtab(); 
+        
+        auto funcSymbol = curScope->find(funcIdentifier->get_name());
+        if (funcSymbol == curScope->end()) {
+            return set_error(fmt::format("Identifier '{}' is not found", funcIdentifier->get_name()));
+        }
+
+        return nullptr;
     }
 
 private:
