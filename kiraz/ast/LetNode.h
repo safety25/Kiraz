@@ -33,12 +33,17 @@ public:
 
         if (auto var_name = std::dynamic_pointer_cast<const ast::Identifier>(m_name)) {
             if (st.get_symbol(var_name->get_name())) {
-                return set_error(fmt::format("Variable '{}' is already defined", var_name->get_name()));
+            
+            return set_error(fmt::format("Identifier '{}' is already in symtab", var_name->get_name()));
+            }  else {
+                st.add_symbol(var_name->get_name(), shared_from_this());
+            }
+        if (isupper(var_name->get_name()[0])) {
+                return set_error(fmt::format("Variable name '{}' can not start with an uppercase letter", var_name->get_name()));
+            } else {
+                st.add_symbol(var_name->get_name(), shared_from_this());
             }
 
-            st.add_symbol(var_name->get_name(), shared_from_this());
-        } else {
-            return set_error("LetNode name must be an identifier");
         }
 
         if (m_type) {
