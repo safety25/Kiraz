@@ -187,16 +187,19 @@ public:
 
     Node::Ptr compute_stmt_type(SymbolTable &st) override {
         set_cur_symtab(st.get_cur_symtab());
+        std::shared_ptr<const ast::Identifier> class_name;
 
-        if (auto class_name = std::dynamic_pointer_cast<const ast::Identifier>(m_name)) {
-            if (st.get_symbol(class_name->get_name())) {
-                return set_error(fmt::format("Class '{}' is already defined", class_name->get_name()));
-            }
+        if (auto temp_name = std::dynamic_pointer_cast<const ast::Identifier>(m_name)) {
+            class_name = temp_name;
+            } else {
 
-            st.add_symbol(class_name->get_name(), shared_from_this());
-        } else {
-            return set_error("Class name must be an identifier");
+        return nullptr;
         }
+        if (std::islower(class_name->get_name()[0])) {
+        return set_error(fmt::format("Class name '{}' can not start with a lowercase letter", class_name->get_name()));
+    }
+
+      st.add_symbol(class_name->get_name(), shared_from_this());
 
         if (m_parent) {
             if (auto parent_class_name = std::dynamic_pointer_cast<const ast::Identifier>(m_parent)) {
