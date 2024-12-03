@@ -150,6 +150,10 @@ public:
         return set_error(fmt::format("Function '{}' is already defined", func_name->get_name()));
     }
 
+    if (std::islower(func_name->get_name()[0])) {
+        return set_error(fmt::format("Function name '{}' can not start with a lowercase letter", func_name->get_name()));
+    }
+
     st.add_symbol(func_name->get_name(), shared_from_this());
     if (auto args = std::dynamic_pointer_cast<FuncArgs>(m_args)) {
         std::unordered_set<std::string> seen_args;
