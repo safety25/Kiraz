@@ -168,10 +168,18 @@ public:
             if (seen_args.count(arg_name->get_name())) {
                 return set_error(fmt::format("Identifier '{}' in argument list of function '{}' is already in symtab", arg_name->get_name(), func_name->get_name()));
             }
+
+            seen_args.insert(arg_name->get_name());
+            auto arg_type = arg_node->get_type();
+            if (auto type_name = std::dynamic_pointer_cast<ast::Identifier>(m_name)) {
+                if (!st.get_symbol(type_name->get_name())) {
+                    return set_error(fmt::format("Identifier '{}' in type of argument '{}' in function '{}' is not found", type_name->get_name(), arg_name->get_name(), func_name->get_name()));
+                }
+            } 
         }
     }
 
-    return nullptr;  
+    return shared_from_this();  
 }
 
 private:
