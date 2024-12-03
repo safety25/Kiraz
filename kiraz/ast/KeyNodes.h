@@ -197,7 +197,18 @@ public:
         }
         if (std::islower(class_name->get_name()[0])) {
         return set_error(fmt::format("Class name '{}' can not start with a lowercase letter", class_name->get_name()));
+    } else {
+              st.add_symbol(class_name->get_name(), shared_from_this());
     }
+
+      if (auto class_name = std::dynamic_pointer_cast<const ast::Identifier>(m_name)) {
+            if (st.get_symbol(class_name->get_name())) {
+                return set_error(fmt::format("Identifier '{}' is already in symtab", class_name->get_name()));
+            } else {
+              st.add_symbol(class_name->get_name(), shared_from_this());
+    }
+        }
+
 
       st.add_symbol(class_name->get_name(), shared_from_this());
 
@@ -206,21 +217,14 @@ public:
                 if (!st.get_symbol(parent_class_name->get_name())) {
                     return set_error(fmt::format("Type '{}' is not found", parent_class_name->get_name()));
                 }
-            } else {
-                return set_error("Class parent must be an identifier");
-            }
+            } 
         }
 
         if (m_stmt_list) {
             m_stmt_list->compute_stmt_type(st);
         }
 
-            if (auto class_name = std::dynamic_pointer_cast<const ast::Identifier>(m_name)) {
-            if (st.get_symbol(class_name->get_name())) {
-                return set_error(fmt::format("Identifier '{}' is already in symtab", class_name->get_name()));
-            }
-        }
-
+            
         
 
         return shared_from_this();
