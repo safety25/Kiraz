@@ -112,6 +112,14 @@ public:
         Node::Ptr compute_stmt_type(SymbolTable &st) override {
                 auto left_type = m_left->compute_stmt_type(st);
                 auto right_type = m_right->compute_stmt_type(st);
+
+                if (auto identifier_node = std::dynamic_pointer_cast<const ast::Identifier>(m_right)) {
+            const std::string& name = identifier_node->get_name();
+            if (st.is_builtin_keyword(name)) {
+                return set_error(fmt::format("Overriding builtin '{}' is not allowed", name));
+            }
+        }
+
                 
             if (auto func_node = std::dynamic_pointer_cast<const ast::FuncNode>(m_right)) {
             right_type = func_node->get_return_type(); 
