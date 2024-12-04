@@ -5,6 +5,7 @@
 #include "Node.h"
 #include "Token.h"
 #include <lexer.hpp>
+#include <unordered_set> 
 
 enum class ScopeType {
     Module,
@@ -36,6 +37,11 @@ struct Scope {
         }
         return {name, iter->second};
     }
+
+      void add_symbol(const std::string &name, Node::Ptr m) {
+        assert(!name.empty());
+        symbols[name] = m;
+    }
 };
 
 class SymbolTable {
@@ -57,6 +63,19 @@ public:
     explicit SymbolTable(ScopeType);
 
     virtual ~SymbolTable();
+
+    bool is_builtin_keyword(const std::string& name) const {
+        static const std::unordered_set<std::string> builtins = {
+            "and", "or", "not"
+        };
+        return builtins.find(name) != builtins.end();
+    }
+
+    void add_builtin_keywords() {
+        m_symbols.back()->add_symbol("and", nullptr);
+        m_symbols.back()->add_symbol("or", nullptr);
+        m_symbols.back()->add_symbol("not", nullptr);
+    }
 
     Node::Ptr add_symbol(const std::string &name, Node::Ptr m) {
         assert(! name.empty());
