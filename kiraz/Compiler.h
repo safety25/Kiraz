@@ -75,6 +75,16 @@ public:
         m_symbols.back()->add_symbol("and", nullptr);
         m_symbols.back()->add_symbol("or", nullptr);
         m_symbols.back()->add_symbol("not", nullptr);
+
+        m_symbols.back()->add_symbol("Integer64", nullptr);
+        m_symbols.back()->add_symbol("String", nullptr);
+        m_symbols.back()->add_symbol("Void", nullptr);
+        m_symbols.back()->add_symbol("Class", nullptr);
+        m_symbols.back()->add_symbol("Module", nullptr);
+        m_symbols.back()->add_symbol("Integer64", nullptr);
+        m_symbols.back()->add_symbol("true", nullptr);
+        m_symbols.back()->add_symbol("false", nullptr);
+
     }
 
     Node::Ptr add_symbol(const std::string &name, Node::Ptr m) {

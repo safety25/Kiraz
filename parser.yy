@@ -39,6 +39,9 @@ module:
     stmt { 
         $$ = Node::add<ast::Module>($1); 
     }
+    stmt_list { 
+        $$ = Node::add<ast::Module>($1); 
+    }
     ;   
 
 stmt:

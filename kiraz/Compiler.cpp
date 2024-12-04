@@ -109,6 +109,7 @@ SymbolTable::SymbolTable()
     if (! s_module_io) {
         s_module_io = Compiler::current()->compile_module(FILE_io_ki);
     }
+    add_builtin_keywords();
 }
 
 SymbolTable::SymbolTable(ScopeType scope_type) : SymbolTable() {
