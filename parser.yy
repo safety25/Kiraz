@@ -130,7 +130,10 @@ combined_stmt:
     ;
 
 class_stmt:
-    KW_CLASS type OP_LBRACE reverse_stmt_list OP_RBRACE {
+    KW_CLASS type OP_COLON type OP_LBRACE reverse_stmt_list OP_RBRACE {
+        $$ = Node::add<ast::ClassNode>($2, $4, $6);
+    }
+    | KW_CLASS type OP_LBRACE reverse_stmt_list OP_RBRACE {
         $$ = Node::add<ast::ClassNode>($2, $4); 
     }
     ;
@@ -160,7 +163,7 @@ import_stmt:
     ;
 
 assign_stmt: 
-    type OP_ASSIGN expr { $$ = Node::add<ast::AssignNode>($1, $3); }
+    expr OP_ASSIGN expr { $$ = Node::add<ast::AssignNode>($1, $3); }
 
 func_stmt:
     KW_FUNC type OP_LPAREN arg_list OP_RPAREN OP_COLON type OP_LBRACE stmt_list OP_RBRACE OP_SCOLON {
