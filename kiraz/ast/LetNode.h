@@ -28,10 +28,14 @@ public:
         return result;
     }
 
+    std::string get_name() const {
+        return m_type->as_string();
+    }
+
     Node::Ptr compute_stmt_type(SymbolTable &st) override {
         set_cur_symtab(st.get_cur_symtab());
 
-        if (auto var_name = std::dynamic_pointer_cast<const ast::Identifier>(m_name)) {
+        if (auto var_name = std::dynamic_pointer_cast<const ast::LetNode>(m_name)) {
             if (st.get_symbol(var_name->get_name())) {
             
             return set_error(fmt::format("Identifier '{}' is already in symtab", var_name->get_name()));
@@ -47,7 +51,7 @@ public:
         }
 
         if (m_type) {
-            if (auto type_name = std::dynamic_pointer_cast<const ast::Identifier>(m_type)) {
+            if (auto type_name = std::dynamic_pointer_cast<const ast::LetNode>(m_type)) {
                 if (!st.get_symbol(type_name->get_name())) {
                     return set_error(fmt::format("Type '{}' not found", type_name->get_name()));
                 }
