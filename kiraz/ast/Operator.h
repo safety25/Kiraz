@@ -4,6 +4,8 @@
 #include <cassert>
 
 #include <kiraz/Node.h>
+#include <kiraz/ast/FuncNode.h>
+#include <kiraz/Compiler.h>
 
 namespace ast {
 class OpBinary : public Node {
@@ -111,6 +113,10 @@ public:
                 auto left_type = m_left->compute_stmt_type(st);
                 auto right_type = m_right->compute_stmt_type(st);
                 
+            if (auto func_node = std::dynamic_pointer_cast<const ast::FuncNode>(m_right)) {
+            right_type = func_node->get_return_type(); 
+        }
+
             if (left_type && right_type) {
                 if (left_type->as_string() != right_type->as_string()) {
 

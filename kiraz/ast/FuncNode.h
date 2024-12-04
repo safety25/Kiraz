@@ -7,6 +7,7 @@
 #include <memory>
 #include <unordered_set>
 #include <kiraz/ast/Literal.h>
+#include <kiraz/Compiler.h>
 
 namespace ast {
 
