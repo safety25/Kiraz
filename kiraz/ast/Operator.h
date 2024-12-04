@@ -107,6 +107,22 @@ public:
         return fmt::format("Assign(l={}, r={})", m_left->as_string(), m_right->as_string());
     }
 
+        Node::Ptr compute_stmt_type(SymbolTable &st) override {
+                auto left_type = m_left->compute_stmt_type(st);
+                auto right_type = m_right->compute_stmt_type(st);
+                
+            if (left_type && right_type) {
+                if (left_type->as_string() != right_type->as_string()) {
+
+                return set_error(fmt::format("Left type '{}' of assignment does not match the right type '{}'", 
+                                             left_type->as_string(), right_type->as_string()));
+            }
+        }
+
+        return shared_from_this();
+    }
+
+
 private:
     Node::Ptr m_left, m_right;
 };
