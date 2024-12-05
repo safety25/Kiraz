@@ -26,7 +26,7 @@ public:
         }
         
         if (m_root) {
-            fmt::print("m_root type: {}\n", typeid(*m_root).name());
+            fmt::print("m_root type: {}\n", typeid(m_root).name());
         } else {
             fmt::print("m_root is null\n");
         }
