@@ -25,16 +25,16 @@ public:
             m_symtab = std::make_shared<SymbolTable>();
         }
         
-        if (m_root) {
+        /*if (m_root) {
             fmt::print("m_root type: {}\n", typeid(m_root).name());
         } else {
             fmt::print("m_root is null\n");
-        }
+        }*/
 
         set_cur_symtab(st.get_cur_symtab());
         if(m_root){  
             auto node_list = std::dynamic_pointer_cast<ast::NodeList>(m_root);
-            fmt::print("test{}",node_list==nullptr);
+            //fmt::print("test{}",node_list==nullptr);
             if (node_list) {
                 auto scope = st.enter_scope(ScopeType::Module, shared_from_this());
                 for (const auto &stmt : node_list->get_list()){
