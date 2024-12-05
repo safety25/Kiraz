@@ -40,7 +40,7 @@ class FuncArgs : public Node {
 public:
     FuncArgs() : Node(OP_LPAREN) {}
     
-    std::vector<Node::Ptr> get_list() const override {
+    std::vector<Node::Ptr>& get_list() {
         return m_args;  
     }
 
@@ -86,8 +86,8 @@ public:
         m_nodes.push_back(node);
     }
 
-    std::vector<Node::Ptr> get_list() const override {
-        return m_nodes; 
+    std::vector<Node::Ptr>& get_list() {
+        return m_nodes;  
     }
 
     std::string as_string() const override {

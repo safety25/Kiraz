@@ -155,7 +155,7 @@ public:
         return ""; 
     }
 
-    virtual std::vector<Node::Ptr> get_list() const { 
+    virtual std::vector<Node::Ptr> get_args() const { 
         return {};  
     }
 
