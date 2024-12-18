@@ -31,7 +31,7 @@ Compiler::~Compiler() {
     s_current = nullptr;
 }
 
-int Compiler::compile_file(const std::string &file_name, std::ostream &ostr) {
+int Compiler::compile_file(const std::string &file_name) {
     yyin = fopen(file_name.data(), "rb");
     if (! yyin) {
         perror(file_name.data());
@@ -42,16 +42,16 @@ int Compiler::compile_file(const std::string &file_name, std::ostream &ostr) {
     auto root = Node::get_root();
     reset();
 
-    return compile(root, ostr);
+    return compile(root);
 }
 
-int Compiler::compile_string(const std::string &code, std::ostream &ostr) {
+int Compiler::compile_string(const std::string &code) {
     buffer = yy_scan_string(code.data());
     yyparse();
     auto root = Node::get_root();
     reset();
 
-    return compile(root, ostr);
+    return compile(root);
 }
 
 Node::Ptr Compiler::compile_module(const std::string &str) {
@@ -59,7 +59,7 @@ Node::Ptr Compiler::compile_module(const std::string &str) {
     yyparse();
     auto retval = Node::pop_root();
     reset();
-
+    assert(retval);
     return retval;
 }
 
@@ -78,7 +78,7 @@ void Compiler::reset() {
     reset_parser();
 }
 
-int Compiler::compile(Node::Ptr root, std::ostream &ostr) {
+int Compiler::compile(Node::Ptr root) {
     if (! root) {
         return 1;
     }
@@ -86,18 +86,14 @@ int Compiler::compile(Node::Ptr root, std::ostream &ostr) {
     SymbolTable st(ScopeType::Module);
 
     if (auto ret = root->compute_stmt_type(st)) {
-        set_error(fmt::format(
-                "Error at {}:{}: {}\n", ret->get_line(), ret->get_col(), ret->get_error()));
+        set_error(FF("Error at {}:{}: {}\n", ret->get_line(), ret->get_col(), ret->get_error()));
         Node::reset_root();
         return 1;
     }
 
-    /*
-    MemoryManager mm;
-    if (auto ret = root->gen_wat(mm, ostr)) {
+    if (auto ret = root->gen_wat(m_ctx)) {
         return 2;
     }
-    */
 
     return 0;
 }
@@ -114,4 +110,13 @@ SymbolTable::SymbolTable()
 
 SymbolTable::SymbolTable(ScopeType scope_type) : SymbolTable() {
     m_symbols.back()->scope_type = scope_type;
+}
+
+WasmContext::Coords WasmContext::add_to_memory(const std::string &s) {
+    assert(! s.empty());
+    return {}; // TODO:
+}
+
+WasmContext::Coords WasmContext::add_to_memory(uint32_t s) {
+    return {}; // TODO:
 }
