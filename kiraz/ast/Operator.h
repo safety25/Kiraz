@@ -80,6 +80,27 @@ private:
 class OpAdd : public OpBinary {
 public:
     OpAdd(const Node::Ptr &left, const Node::Ptr & right) : OpBinary(OP_PLUS, left, right) {}
+
+    Node::Ptr gen_wat(WasmContext &ctx) override {
+        std::string left_wat = get_left()->gen_wat(ctx)->as_string();
+
+        std::string right_wat = get_right()->gen_wat(ctx)->as_string();
+
+        std::string type = get_stmt_type()->as_string();
+        std::string wat_code;
+
+        if (type == "Integer64") {
+            wat_code = FF("{}\n{}\n  i64.add", left_wat, right_wat);
+        } else if (type == "Integer32") {
+            wat_code = FF("{}\n{}\n  i32.add", left_wat, right_wat);
+        } else {
+            throw std::runtime_error("Unsupported type for OpAdd");
+        }
+
+        auto result_node = shared_from_this();
+        result_node->set_id(wat_code);
+        return result_node;
+    }
 };
 
 class OpSub : public OpBinary {
