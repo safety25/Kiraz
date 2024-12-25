@@ -29,7 +29,7 @@ public:
     }
 
     std::string get_name() const {
-        return m_type->as_string();
+        return m_name->as_string();
     }
 
     Node::Ptr compute_stmt_type(SymbolTable &st) override {
@@ -83,6 +83,26 @@ public:
     } 
 
         return shared_from_this(); 
+    }
+
+    Node::Ptr gen_wat(WasmContext &ctx) override {
+        std::string wat_code;
+
+        if (m_type->as_string() == "Integer64") {
+            ctx.locals() << fmt::format("  (local ${} i64)\n", get_name());
+        } else if (m_type->as_string() == "Integer32") {
+            ctx.locals() << fmt::format("  (local ${} i32)\n", get_name());
+        } else {
+            throw std::runtime_error(fmt::format("Unsupported type '{}'", m_type->as_string()));
+        }
+
+        if (m_initializer) {
+            auto initializer_wat = m_initializer->gen_wat(ctx)->as_string();
+            wat_code += fmt::format("{}\n  local.set ${}", initializer_wat, get_name());
+        }
+
+        ctx.body() << wat_code << "\n";
+        return shared_from_this();
     }
 
 private:
