@@ -187,6 +187,26 @@ public:
     return shared_from_this();  
 }
 
+    Node::Ptr gen_wat(WasmContext &ctx) override {
+        std::string func_name = m_name->as_string();
+        std::string return_type = (m_returnType->as_string() == "Integer64") ? "i64" : "void";
+
+        std::string params;
+        if (auto args = std::dynamic_pointer_cast<FuncArgs>(m_args)) {
+            for (const auto &arg : args->get_list()) {
+                auto arg_node = std::dynamic_pointer_cast<ast::ArgNode>(arg);
+                if (arg_node) {
+                    params += fmt::format("(param ${} {}) ", 
+                                          arg_node->get_name()->as_string(),
+                                          (arg_node->get_type() == "Integer64") ? "i64" : "i32");
+                }
+            }
+        }
+
+
+        return shared_from_this();
+    }
+
 private:
     Node::Ptr m_name;        
     Node::Ptr m_args;         
