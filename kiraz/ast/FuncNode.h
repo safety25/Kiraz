@@ -203,7 +203,17 @@ public:
             }
         }
 
+        std::string body;
+        if (auto body_list = std::dynamic_pointer_cast<NodeList>(m_body)) {
+            for (const auto &stmt : body_list->get_list()) {
+                body += stmt->gen_wat(ctx)->as_string() + "\n";
+            }
+        }
 
+        std::string wat_code = fmt::format("(func ${} {} (result {})\n{})",
+                                           func_name, params, return_type, body);
+
+        ctx.body() << wat_code << "\n";
         return shared_from_this();
     }
 
